@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile View System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .profile-pic {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .profile-info h1 {
+            margin: 0;
+            color: #333;
+        }
+        .profile-info p {
+            margin: 5px 0;
+            color: #666;
+        }
+        .profile-details {
+            margin-top: 20px;
+        }
+        .detail-item {
+            margin-bottom: 10px;
+        }
+        .detail-item label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+        .view-counter {
+            text-align: center;
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header">
+            <img src="Media.jpg" alt="Profile Picture" class="profile-pic">
+            <div class="profile-info">
+                <h1>John Philip R. Rañada</h1>
+                <p>UnderStudy Team Leader</p>
+		<p>Agency: Global Inc.</p>
+		<p>Work at: Toyota Motor Philippines</p>
+                <p>Location: City of Santa Rosa, Laguna 4026</p>
+            </div>
+        </div>
+        <div class="profile-details">
+            <div class="detail-item">
+                <label>Email:</label>
+                <span>hrdmgt.admin@toyota.com.ph</span>
+            </div>
+            <div class="detail-item">
+                <label>Local No:</label>
+                <span>8170</span>
+            </div>
+            <div class="detail-item">
+                <label>Bio:</label>
+                <span>I’m a tech-savvy person who’s really into new technologies and AI. When I’m not exploring the latest tech stuff, you’ll usually find me gaming online or playing billiards, basketball, or badminton. I currently work full-time as a CNB Staff, and I like trying out new things whenever I can. Overall, I’m the type who’s always curious and ready to explore whatever comes next.</span>
+            </div>
+<div class="detail-item">
+                <label>Part Time:</label>
+                <span>Video Editor / Virtual Assistant</span>
+            </div>
+        </div>
+        <div class="view-counter">
+            <p>Profile Views: <span id="view-count">0</span></p>
+        </div>
+    </div>
+<script>
+        // Simple view counter simulation (in a real app, this would be server-side)
+        let viewCount = localStorage.getItem('profileViews') || 0;
+        viewCount = parseInt(viewCount) + 1;
+        localStorage.setItem('profileViews', viewCount);
+        document.getElementById('view-count').textContent = viewCount;
+    </script>
+
+</body>
+</html>
