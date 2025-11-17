@@ -68,6 +68,9 @@
         <div class="profile-header">
             <img src="Profile.jpg" alt="Profile Picture" class="profile-pic">
             <div class="profile-info">
+
+
+
                 <h1>John Philip R. Rañada</h1>
                 <p>UnderStudy Team Leader</p>
 		<p>Agency: Global Inc.</p>
@@ -86,18 +89,73 @@
             </div>
 <div class="detail-item">
                 <label>Part Time:</label>
-                <span>Video Editing, Virtual Assistant & Web Design</span>
-            </div>
-<div class="detail-item">
+                <span>Video Editing, Web Design & Virtual Assistant</span>
+            </div>    
+  <div class="detail-item">
                 <label>Bio:</label>
                 <span>I’m a tech-savvy person who’s really into new technologies and AI. When I’m not exploring the latest tech stuff, you’ll usually find me gaming online or playing billiards, basketball, or badminton. I currently work full-time as a CNB Staff, and I like trying out new things whenever I can. Overall, I’m the type who’s always curious and ready to explore whatever comes next.</span>
             </div>
-        </div>
         <div class="view-counter">
             <p>Profile Views: <span id="view-count">0</span></p>
         </div>
+            </div>
+                </div>
+<div class="slider-dots">
+                <div class="dot active" data-slide="0"></div>
+                <div class="dot" data-slide="1"></div>
+                <div class="dot" data-slide="2"></div> <!-- Placeholder for third slide if needed -->
+            </div>
     </div>
 <script>
+
+// JavaScript for slider functionality
+        const slides = document.querySelectorAll('.testimonial-slide');
+        const dots = document.querySelectorAll('.dot');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let currentSlide = 0;
+
+        function showSlide(index) {
+            // Hide all slides
+            slides.forEach(slide => slide.classList.remove('active'));
+            dots.forEach(dot => dot.classList.remove('active'));
+
+            // Show the current slide (only if index is within bounds)
+            if (index >= 0 && index < slides.length) {
+                slides[index].classList.add('active');
+                dots[index].classList.add('active');
+                currentSlide = index;
+            }
+        }
+
+        // Event listeners for dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                if (index < slides.length) { // Only allow clicks on existing slides
+                    showSlide(index);
+                }
+            });
+        });
+
+        // Event listeners for navigation buttons
+        prevBtn.addEventListener('click', () => {
+            let newIndex = currentSlide - 1;
+            if (newIndex < 0) newIndex = slides.length - 1; // Loop to last
+            showSlide(newIndex);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            let newIndex = currentSlide + 1;
+            if (newIndex >= slides.length) newIndex = 0; // Loop to first
+            showSlide(newIndex);
+        });
+
+        // Auto-slide every 5 seconds (optional)
+        setInterval(() => {
+            let newIndex = (currentSlide + 1) % slides.length;
+            showSlide(newIndex);
+        }, 5000);
+
         // Simple view counter simulation (in a real app, this would be server-side)
         let viewCount = localStorage.getItem('profileViews') || 0;
         viewCount = parseInt(viewCount) + 1;
@@ -107,7 +165,4 @@
 
 </body>
 </html>
-
-
-
 
