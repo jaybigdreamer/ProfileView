@@ -1,1 +1,1 @@
-More like this is my simple profile view
+More like this is our team preview
