@@ -3,23 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Helpdesk Team Directory</title>
+  <title>Helpdesk Team</title>
+
   <style>
+
     body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: url('background.jpg') no-repeat center center fixed;
-      background-size: cover;
-    }
-    .container {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 20px;
-      background-color: rgba(248, 248, 248, 0.95); /* semi-transparent */
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: url('background.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.container {
+  max-width: 850px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.95); /* semi-transparent white */
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+	
     .header {
       text-align: center;
       margin-bottom: 20px;
@@ -69,15 +73,19 @@
   </style>
 </head>
 <body
-
-<div style="text-align: left; margin-top: 20px; background-image: url('Office1.jpg'); background-size: cover; background-position: center;">
+<div style="text-align: left; margin-top: 20px; background-image: url('Office1.jpg'); background-size: cover; background-position: center; height: 300px;">
+  <!-- Optional content here -->
 </div>
-
   <div class="container" >
 
-<div style="text-align: left; margin-top: 20px;); background-size: cover; background-position: center;">
-  <label for="bg-selector" style="font-weight: bold; color: #fff;"></label>
-  <select id="bg-selector" onchange="changeBackground()" style="padding: 5px; border-radius: 5px;">
+<div style="text-align: left;">
+  <a href="Index.html" style="display: inline-block; padding: 1px 2px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 3px;">
+    Welcome to CNB</a>
+</div>
+
+<div style="text-align: left; margin-top: 1px;); background-size: cover; background-position: center;">
+  <label for="bg-selector" style="font-weight: bold; color: #fff;">  </label>
+  <select id="bg-selector" onchange="changeBackground()" style="padding: 1px; border-radius: 5px;">
     <option value="Office1.jpg">Default</option>
     <option value="Sky1.jpg">Sky</option>
     <option value="Ocean1.jpg">Ocean</option>
