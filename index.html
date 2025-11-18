@@ -1,133 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .profile-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .profile-pic {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-        .profile-info {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .profile-info h1 {
-            margin: 0;
-            color: #333;
-        }
-        .profile-info p {
-            margin: 5px 0;
-            color: #666;
-        }
-        .profile-details {
-            margin-top: 20px;
-        }
-        .detail-item {
-            margin-bottom: 10px;
-        }
-        .detail-item label {
-            font-weight: bold;
-            display: inline-block;
-            width: 120px;
-        }
-        .view-counter {
-            text-align: center;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #e9ecef;
-            border-radius: 4px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Helpdesk Team Directory</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('background.jpg') no-repeat center center fixed;
+      background-size: cover;
+    }
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: rgba(248, 248, 248, 0.95); /* semi-transparent */
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h2 {
+      margin: 0;
+      color: #333;
+    }
+    .search-box {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .search-box input {
+      width: 80%;
+      padding: 10px;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .team-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .team-card {
+	text-align: center;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 15px;
+      transition: box-shadow 0.3s ease;
+    }
+    .team-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .team-card a {
+      color: #007BFF;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .team-card p {
+      margin: 5px 0 0;
+      color: #555;
+      font-size: 14px;
+    }
+  </style>
 </head>
-<body>
-    <div class="container">  
-<div class="detail-item" style="text-align: center;">
-  <div style="display: inline-block; border: 0px solid gray; padding: 15px; background-color: #ffffff; border-radius: 8px; width: 550px;">
-    <h3 style="margin: 0; color: #000000;">Meet Our Dedicated Helpdesk Team</h3>
+<body
+
+<div style="text-align: left; margin-top: 20px; background-image: url('Office1.jpg'); background-size: cover; background-position: center;">
+</div>
+
+  <div class="container" >
+
+<div style="text-align: left; margin-top: 20px;); background-size: cover; background-position: center;">
+  <label for="bg-selector" style="font-weight: bold; color: #fff;"></label>
+  <select id="bg-selector" onchange="changeBackground()" style="padding: 5px; border-radius: 5px;">
+    <option value="Office1.jpg">Default</option>
+    <option value="Sky1.jpg">Sky</option>
+    <option value="Ocean1.jpg">Ocean</option>
+    <option value="Design1.jpg">Design</option>
+  </select>
+</div>
+    <div class="header">
+      <h2>Meet Our Dedicated Helpdesk Team</h2>
+    </div>
+
+    <div class="team-list">
+      <div class="team-card">
+        <a href="Cnb.tl.html">UnderStudy Team Leader - John Philip R. Rañada</a>
+        <p>hrdmgt.admin@toyota.com.ph</p>
+      </div>
+
+      <div class="team-card">
+        <a href="Cnb.ben.html">Benefits Support (Uniform) - Ivan S. Basbas</a>
+        <p>Cnb.admin@toyota.com.ph</p>
+      </div>
+
+      <div class="team-card">
+        <a href="Cnb.govt.html">Government Support - Chloe Mae A. Magbato</a>
+        <p>Cnb.helpdesk@toyota.com.ph</p>
+      </div>
+
+      <div class="team-card">
+        <a href="Red.shf.html">Red Shift Rep. / Payroll Support - Marc Allen R. Arzola</a>
+        <p>Cnb.mailbox@toyota.com.ph</p>
+      </div>
+
+      <div class="team-card">
+        <a href="White.shf.html">White Shift Rep. / Payroll Support - Genesis N. Riguer</a>
+        <p><em>No email for a moment</em></p>
+      </div>
+    </div>
   </div>
-</div>
 
-<center>
-
-<div style="border: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; border-radius: 8px; width: 400px;">
-  <span>
-    <a href="Cnb.tl.html" style="color: #007BFF; text-decoration: none;"> Mr. John Philip R. Rañada</a> <br>
-    (hrdmgt.admin@toyota.com.ph)
-  </span>
-</div>
-<br>
-	
-<div style="border: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; border-radius: 8px; width: 400px;">
-  <span>
-    <a href="Cnb.ben.html" style="color: #007BFF; text-decoration: none;"> Mr. Ivan S. Basbas </a> <br>
-    (Cnb.admin@toyota.com.ph)
-  </span>
-</div>
-	<br>
-	
-		<div style="border: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; border-radius: 8px; width: 400px;">
-  <span>
-    <a href="Cnb.govt.html" style="color: #007BFF; text-decoration: none;"> Ms. Chloe Mae A. Magbato </a> <br>
-    (Cnb.helpdesk@toyota.com.ph)
-  </span>
-</div>
-<br>
-
-<div style="border: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; border-radius: 8px; width: 400px;">
-  <span>
-    <a href="Red.shf.html" style="color: #007BFF; text-decoration: none;"> Mr. Marc Allen R. Arzola </a> <br>
-    (Cnb.mailbox@toyota.com.ph)
-  </span>
-</div>
-<br>
-	
-		<div style="border: 1px solid #ccc; padding: 15px; background-color: #f9f9f9; border-radius: 8px; width: 400px;">
-  <span>
-    <a href="White.shf.html" style="color: #007BFF; text-decoration: none;"> Mr. Genesis N. Riguer </a> <br>
-    (no email for a moment)
-  </span>
-</div>
-<br>
-            </div>
-        <div class="view-counter">
-            <p>Profile Views: <span id="view-count">0</span></p>
-        </div>
-            </div>
-                </div>
-</center>
 <script>
-        // Simple view counter simulation (in a real app, this would be server-side)
-        let viewCount = localStorage.getItem('profileViews') || 0;
-        viewCount = parseInt(viewCount) + 1;
-        localStorage.setItem('profileViews', viewCount);
-        document.getElementById('view-count').textContent = viewCount;
-    </script>
+    function changeBackground() {
+      const selector = document.getElementById("bg-selector");
+      const selectedImage = selector.value;
+      document.body.style.backgroundImage = `url('${selectedImage}')`;
+    }
+  </script>
 
 </body>
 </html>
-
 
