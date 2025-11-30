@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Editable Organizational Chart</title>
+  <!-- Tailwind CDN for quick styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* small visual helpers */
+    .node { min-width:180px }
+    .card { transition: box-shadow .12s ease }
+    .card:hover { box-shadow: 0 8px 20px rgba(2,6,23,.08) }
+    .connector-vertical { width:2px; margin:0 auto; background:linear-gradient(#e6edf7,#cbd5e1) }
+    .children { display:flex; gap:1rem; justify-content:center; margin-top:1rem; flex-wrap:wrap }
+    @media (max-width:640px){ .node{ min-width:140px } }
+    /* small monospace for JSON area */
+    textarea.font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Courier New", monospace; }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-6">
+  <div class="max-w-6xl mx-auto">
+    <header class="mb-6">
+      <h1 class="text-2xl font-semibold">Editable Organizational Chart</h1>
+      <p class="text-sm text-slate-600">View → Select → Edit / Add / Delete. Data stored locally (localStorage).</p>
+    </header>
+
+    <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Controls -->
+      <section class="col-span-1 bg-white p-4 rounded-lg shadow-sm">
+        <h2 class="font-medium">Controls</h2>
+
+        <div class="mt-3 space-y-2">
+          <button id="add-root" class="w-full bg-blue-600 text-white py-2 rounded">Add Root Node</button>
+          <button id="export-json" class="w-full border border-slate-200 py-2 rounded">Export JSON</button>
+          <button id="toggle-import" class="w-full border border-slate-200 py-2 rounded">Import JSON</button>
+          <div id="import-wrap" class="hidden mt-2">
+            <textarea id="import-json" class="w-full h-24 p-2 border rounded font-mono text-xs" placeholder='Paste JSON array here'></textarea>
+            <div class="flex gap-2 mt-2">
+              <button id="apply-import" class="flex-1 bg-green-600 text-white py-2 rounded">Apply Import</button>
+              <button id="cancel-import" class="flex-1 border py-2 rounded">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <h3 class="font-medium">Selected Node</h3>
+        <form id="node-form" class="mt-3 space-y-2">
+          <input type="hidden" id="nid" />
+          <label class="block text-sm">Name</label>
+          <input id="nname" class="w-full border p-2 rounded" placeholder="e.g., Ma. Kathrina De Leon" />
+          <label class="block text-sm">Role</label>
+          <input id="nrole" class="w-full border p-2 rounded" placeholder="e.g., Benefits Support" />
+          <label class="block text-sm">Parent (Reports to)</label>
+          <select id="nparent" class="w-full border p-2 rounded"></select>
+
+          <div class="flex gap-2">
+            <button id="save-node" type="button" class="flex-1 bg-green-600 text-white py-2 rounded">Save / Create</button>
+            <button id="add-child" type="button" class="flex-1 bg-blue-600 text-white py-2 rounded">Add Child</button>
+            <button id="delete-node" type="button" class="flex-1 bg-red-600 text-white py-2 rounded">Delete</button>
+          </div>
+        </form>
+
+        <hr class="my-4" />
+        <p class="text-sm text-slate-600">Tip: Click any card in the tree to select it. Use Export to save a copy.</p>
+      </section>
+
+      <!-- Chart Visual -->
+      <section class="col-span-2 bg-white p-4 rounded-lg shadow-sm">
+        <h2 class="font-medium mb-3">Org Chart (visual)</h2>
+        <div id="chart" class="overflow-auto p-4 bg-slate-50 rounded min-h-[340px]"></div>
+      </section>
+
+      <!-- Data View (full width) -->
+      <section class="col-span-3 bg-white p-4 rounded-lg shadow-sm">
+        <h2 class="font-medium">Data View (JSON)</h2>
+        <textarea id="data-json" class="w-full h-44 mt-3 p-3 border rounded font-mono text-sm" readonly></textarea>
+      </section>
+    </main>
+
+    <footer class="mt-6 text-xs text-slate-500">Local-only demo • No server. IDs are generated in-browser.</footer>
+  </div>
+
+  <script>
+    /* ------------------------------
+       Simple Editable Org Chart
+       Data model: [ {id, name, role, parentId} ]
+       ------------------------------ */
+
+    const KEY = 'orgchart_v2';
+
+    // default example if no data present
+    const DEFAULT = [
+      { id: 'root', name: 'Team Leader - JP Ranada', role: 'Team Leader', parentId: null },
+      { id: 'kath', name: 'Ma. Kathrina De Leon', role: 'PhilHealth Benefit Claim', parentId: 'root' },
+      { id: 'chel', name: 'Chelsea Aldea', role: 'Benefits Support', parentId: 'root' },
+      { id: 'leo', name: 'Leo Ramos', role: 'IT Support', parentId: 'root' }
+    ];
+
+    /* utilities */
+    const uid = (p='') => p + Math.random().toString(36).slice(2,9);
+    const load = ()=> {
+      try {
+        const raw = localStorage.getItem(KEY);
+        if(!raw) return JSON.parse(JSON.stringify(DEFAULT));
+        return JSON.parse(raw);
+      } catch { return JSON.parse(JSON.stringify(DEFAULT)); }
+    };
+    const save = (arr)=> { localStorage.setItem(KEY, JSON.stringify(arr)); renderAll(); };
+
+    /* build tree from flat list */
+    function buildTree(flat){
+      const map = new Map();
+      flat.forEach(n => map.set(n.id, {...n, children: []}));
+      const roots = [];
+      for(const node of map.values()){
+        if(node.parentId && map.has(node.parentId)) map.get(node.parentId).children.push(node);
+        else roots.push(node);
+      }
+      return roots;
+    }
+
+    /* rendering */
+    const chart = document.getElementById('chart');
+    const dataJson = document.getElementById('data-json');
+    const selId = ()=> document.getElementById('nid').value;
+
+    function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+
+    function createCard(node){
+      const el = document.createElement('div');
+      el.className = 'card node bg-white p-3 rounded-lg border border-slate-100 text-center cursor-pointer';
+      el.dataset.id = node.id;
+      el.innerHTML = `<div class="text-sm font-semibold">${escapeHtml(node.name)}</div>
+                      <div class="text-xs text-slate-500">${escapeHtml(node.role)}</div>`;
+      el.addEventListener('click', e => { e.stopPropagation(); selectNode(node.id); });
+      return el;
+    }
+
+    function renderChart(flat){
+      chart.innerHTML = '';
+      const roots = buildTree(flat);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'flex flex-col items-center';
+      roots.forEach(root => wrapper.appendChild(renderNode(root)));
+      chart.appendChild(wrapper);
+    }
+
+    function renderNode(node){
+      const container = document.createElement('div');
+      container.className = 'flex flex-col items-center';
+      container.appendChild(createCard(node));
+      if(node.children && node.children.length){
+        const v = document.createElement('div'); v.className='connector-vertical mt-2 h-4'; container.appendChild(v);
+        const kids = document.createElement('div'); kids.className='children';
+        node.children.forEach(ch => {
+          const col = document.createElement('div'); col.className='flex flex-col items-center';
+          col.appendChild(renderNode(ch));
+          kids.appendChild(col);
+        });
+        container.appendChild(kids);
+      }
+      return container;
+    }
+
+    function renderDataView(arr){
+      dataJson.value = JSON.stringify(arr, null, 2);
+    }
+
+    function renderParentOptions(arr){
+      const sel = document.getElementById('nparent');
+      sel.innerHTML = '<option value="">-- No Parent (Root) --</option>';
+      arr.forEach(n => {
+        const opt = document.createElement('option');
+        opt.value = n.id;
+        opt.textContent = `${n.name} (${n.role})`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function renderAll(){
+      const arr = load();
+      renderChart(arr);
+      renderDataView(arr);
+      renderParentOptions(arr);
+      // if nothing selected, clear form
+      if(!arr.find(x => x.id === selId())) clearForm();
+      highlightSelected();
+    }
+
+    /* selection & form */
+    function selectNode(id){
+      const arr = load();
+      const node = arr.find(n=>n.id===id); if(!node) return;
+      document.getElementById('nid').value = node.id;
+      document.getElementById('nname').value = node.name;
+      document.getElementById('nrole').value = node.role;
+      document.getElementById('nparent').value = node.parentId || '';
+      highlightSelected();
+    }
+
+    function clearForm(){
+      document.getElementById('nid').value = '';
+      document.getElementById('nname').value = '';
+      document.getElementById('nrole').value = '';
+      document.getElementById('nparent').value = '';
+      highlightSelected();
+    }
+
+    function highlightSelected(){
+      document.querySelectorAll('.node').forEach(el => el.classList.remove('ring-2','ring-blue-200'));
+      const id = selId();
+      if(!id) return;
+      const el = document.querySelector(`.node[data-id="${id}"]`);
+      if(el) el.classList.add('ring-2','ring-blue-200');
+    }
+
+    /* helpers: descendants check to avoid circular parent assignment */
+    function collectDescendants(id, arr){
+      const children = arr.filter(n => n.parentId === id).map(n=>n.id);
+      let res = [];
+      children.forEach(c => { res.push(c); res = res.concat(collectDescendants(c, arr)); });
+      return res;
+    }
+    function isDescendant(id, potentialParentId, arr){
+      if(!potentialParentId) return false;
+      if(id === potentialParentId) return true;
+      const descendants = collectDescendants(id, arr);
+      return descendants.includes(potentialParentId);
+    }
+
+    /* CRUD actions */
+    document.getElementById('add-root').addEventListener('click', ()=>{
+      const name = prompt('Name for new root node (e.g., Team Lead)'); if(!name) return;
+      const role = prompt('Role / title (optional)') || '';
+      const arr = load();
+      arr.push({ id: uid('n-'), name: name.trim(), role: role.trim(), parentId: null });
+      save(arr);
+    });
+
+    document.getElementById('save-node').addEventListener('click', ()=>{
+      const id = document.getElementById('nid').value;
+      const name = document.getElementById('nname').value.trim();
+      const role = document.getElementById('nrole').value.trim();
+      const parentId = document.getElementById('nparent').value || null;
+      if(!name){ alert('Name is required'); return; }
+      const arr = load();
+      if(id){
+        const idx = arr.findIndex(x => x.id === id);
+        if(idx === -1) return;
+        if(isDescendant(id, parentId, arr)){ alert('Cannot set parent to a descendant (would create a cycle).'); return; }
+        arr[idx].name = name; arr[idx].role = role; arr[idx].parentId = parentId;
+        save(arr); selectNode(id);
+      } else {
+        const newId = uid('n-');
+        arr.push({ id: newId, name, role, parentId });
+        save(arr); selectNode(newId);
+      }
+    });
+
+    document.getElementById('add-child').addEventListener('click', ()=>{
+      const parentId = document.getElementById('nid').value;
+      if(!parentId){ alert('Select a parent node first'); return; }
+      const name = prompt('Name of new child'); if(!name) return;
+      const role = prompt('Role / title (optional)') || '';
+      const arr = load();
+      arr.push({ id: uid('n-'), name: name.trim(), role: role.trim(), parentId });
+      save(arr);
+    });
+
+    document.getElementById('delete-node').addEventListener('click', ()=>{
+      const id = document.getElementById('nid').value;
+      if(!id){ alert('Select a node to delete'); return; }
+      if(!confirm('Delete this node and all its descendants?')) return;
+      let arr = load();
+      const toRemove = collectDescendants(id, arr).concat([id]);
+      arr = arr.filter(n => !toRemove.includes(n.id));
+      save(arr); clearForm();
+    });
+
+    /* export / import */
+    document.getElementById('export-json').addEventListener('click', ()=>{
+      const arr = load();
+      const blob = new Blob([JSON.stringify(arr, null, 2)], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'orgchart.json'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('toggle-import').addEventListener('click', ()=>{
+      const wrap = document.getElementById('import-wrap');
+      wrap.classList.toggle('hidden');
+    });
+    document.getElementById('cancel-import').addEventListener('click', ()=> {
+      document.getElementById('import-json').value=''; document.getElementById('import-wrap').classList.add('hidden');
+    });
+
+    document.getElementById('apply-import').addEventListener('click', ()=>{
+      const txt = document.getElementById('import-json').value.trim();
+      if(!txt){ alert('Paste JSON first'); return; }
+      try {
+        const parsed = JSON.parse(txt);
+        if(!Array.isArray(parsed)) throw new Error('Expected top-level array of nodes.');
+        parsed.forEach(n => { if(!n.id || !('name' in n)) throw new Error('Each node must have id and name'); });
+        localStorage.setItem(KEY, JSON.stringify(parsed));
+        document.getElementById('import-json').value=''; document.getElementById('import-wrap').classList.add('hidden');
+        renderAll(); alert('Import applied');
+      } catch (err) { alert('Import failed: ' + err.message); }
+    });
+
+    /* click outside clears selection */
+    chart.addEventListener('click', ()=> clearForm());
+
+    /* initial render */
+    renderAll();
+
+  </script>
+</body>
+</html>
